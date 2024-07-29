@@ -42,7 +42,7 @@ class OpenAISchema(BaseModel):
         Returns:
             model_json_schema (dict): A dictionary in the format of OpenAI's schema as jsonschema
         """
-        schema = cls.model_json_schema()
+        schema = cls.model_json_schema(by_alias=False)
         docstring = parse(cls.__doc__ or "")
         parameters = {
             k: v for k, v in schema.items() if k not in ("title", "description")
@@ -78,7 +78,7 @@ class OpenAISchema(BaseModel):
         return {
             "name": cls.openai_schema["name"],
             "description": cls.openai_schema["description"],
-            "input_schema": cls.model_json_schema(),
+            "input_schema": cls.model_json_schema(by_alias=False),
         }
 
     @classproperty
