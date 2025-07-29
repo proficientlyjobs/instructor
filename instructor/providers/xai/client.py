@@ -147,6 +147,8 @@ def from_xai(
                 parsed._raw_response = raw
                 return parsed
         else:
+            if stream:
+                response_model = prepare_response_model(response_model)
             tool = xchat.tool(
                 name=response_model.__name__,
                 description=response_model.__doc__ or "",
@@ -154,13 +156,22 @@ def from_xai(
             )
             chat.proto.tools.append(tool)
             chat.proto.tool_choice.mode = xchat.chat_pb2.ToolMode.TOOL_MODE_AUTO
-            resp = chat.sample()
-            args = resp.tool_calls[0].function.arguments
-            from ...processing.function_calls import _validate_model_from_json
+            if stream:
+                for resp, _ in chat.stream():
+                    # For xAI, tool_calls are returned at the end of the response.
+                    # Effectively, it is not a streaming response.
+                    # See: https://docs.x.ai/docs/guides/function-calling
+                    if resp.tool_calls:
+                        args = resp.tool_calls[0].function.arguments
+                        return response_model.tasks_from_chunks(args)
+            else:
+                resp = chat.sample()
+                args = resp.tool_calls[0].function.arguments
+                from ...processing.function_calls import _validate_model_from_json
 
-            parsed = _validate_model_from_json(response_model, args, None, strict)
-            parsed._raw_response = resp
-            return parsed
+                parsed = _validate_model_from_json(response_model, args, None, strict)
+                parsed._raw_response = resp
+                return parsed
 
     if isinstance(client, AsyncClient):
         return instructor.AsyncInstructor(
