@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from typing import Any, overload
+import json
 
+from instructor.utils.core import prepare_response_model
 from pydantic import BaseModel
 
 import instructor
@@ -114,16 +116,36 @@ def from_xai(
         call_kwargs.pop("validation_context", None)
         call_kwargs.pop("context", None)
         call_kwargs.pop("hooks", None)
+        # Check if streaming is requested
+        stream = call_kwargs.pop("stream", False)
 
         chat = client.chat.create(model=model, messages=x_messages, **call_kwargs)
 
         if response_model is None:
-            resp = chat.sample()
-            return resp
+            if stream:
+                # TODO: test this
+                responses = (response.content for response, _ in chat.stream())
+                return responses
+            else:
+                resp = chat.sample()
+                return resp
+
         if mode == instructor.Mode.XAI_JSON:
-            raw, parsed = chat.parse(response_model)
-            parsed._raw_response = raw
-            return parsed
+            if stream:
+                response_model = prepare_response_model(response_model)
+                # code from xai_sdk.chat.parse
+                chat.proto.response_format.CopyFrom(
+                    xchat.chat_pb2.ResponseFormat(
+                        format_type=xchat.chat_pb2.FormatType.FORMAT_TYPE_JSON_SCHEMA,
+                        schema=json.dumps(response_model.model_json_schema()),
+                    )
+                )
+                json_chunks = (chunk.content for _, chunk in chat.stream())
+                return response_model.tasks_from_chunks(json_chunks)
+            else:
+                raw, parsed = chat.parse(response_model)
+                parsed._raw_response = raw
+                return parsed
         else:
             tool = xchat.tool(
                 name=response_model.__name__,

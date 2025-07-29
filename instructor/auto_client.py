@@ -920,7 +920,7 @@ def from_provider(
             )
             result = from_xai(
                 client,
-                mode=mode if mode else instructor.Mode.JSON,
+                mode=mode if mode else instructor.Mode.XAI_JSON,
                 model=model_name,
                 **kwargs,
             )
