@@ -141,7 +141,14 @@ def from_xai(
                     )
                 )
                 json_chunks = (chunk.content for _, chunk in chat.stream())
-                return response_model.tasks_from_chunks(json_chunks)
+                if response_model.__name__.startswith("Iterable"):
+                    return response_model.tasks_from_chunks(json_chunks)
+                elif response_model.__name__.startswith("Partial"):
+                    return response_model.model_from_chunks(json_chunks)
+                else:
+                    raise ValueError(
+                        f"Unsupported response model type for streaming: {response_model.__name__}"
+                    )
             else:
                 raw, parsed = chat.parse(response_model)
                 parsed._raw_response = raw
@@ -163,7 +170,14 @@ def from_xai(
                     # See: https://docs.x.ai/docs/guides/function-calling
                     if resp.tool_calls:
                         args = resp.tool_calls[0].function.arguments
-                        return response_model.tasks_from_chunks(args)
+                        if response_model.__name__.startswith("Iterable"):
+                            return response_model.tasks_from_chunks(args)
+                        elif response_model.__name__.startswith("Partial"):
+                            return response_model.model_from_chunks(args)
+                        else:
+                            raise ValueError(
+                                f"Unsupported response model type for streaming: {response_model.__name__}"
+                            )
             else:
                 resp = chat.sample()
                 args = resp.tool_calls[0].function.arguments
