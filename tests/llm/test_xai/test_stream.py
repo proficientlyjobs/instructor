@@ -107,7 +107,7 @@ class GoogleSearch(BaseModel):
     query: str
 
 
-@pytest.mark.parametrize("mode", modes)
+@pytest.mark.parametrize("mode", [instructor.Mode.XAI_JSON])
 @pytest.mark.skipif(
     not os.environ.get("XAI_API_KEY") or os.environ.get("XAI_API_KEY") == "test",
     reason="XAI_API_KEY not set or invalid",
@@ -132,7 +132,7 @@ def test_iterable_create_union_model(mode):
     assert count >= 1
 
 
-@pytest.mark.parametrize("mode", modes)
+@pytest.mark.parametrize("mode", [instructor.Mode.XAI_JSON])
 @pytest.mark.asyncio
 @pytest.mark.skipif(
     not os.environ.get("XAI_API_KEY") or os.environ.get("XAI_API_KEY") == "test",

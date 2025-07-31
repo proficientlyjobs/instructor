@@ -3,6 +3,9 @@ from __future__ import annotations
 from typing import Any, overload
 import json
 
+from instructor.dsl.iterable import IterableBase
+from instructor.dsl.partial import PartialBase
+
 from instructor.utils.core import prepare_response_model
 from pydantic import BaseModel
 
@@ -84,9 +87,12 @@ def from_xai(
         if response_model is None:
             resp = await chat.sample()
             return resp
+
+        if is_stream:
+            response_model = prepare_response_model(response_model)
+
         if mode == instructor.Mode.XAI_JSON:
             if is_stream:
-                response_model = prepare_response_model(response_model)
                 # code from xai_sdk.chat.parse
                 chat.proto.response_format.CopyFrom(
                     xchat.chat_pb2.ResponseFormat(
@@ -95,9 +101,9 @@ def from_xai(
                     )
                 )
                 json_chunks = (chunk.content async for _, chunk in chat.stream())
-                if response_model.__name__.startswith("Iterable"):
+                if issubclass(response_model, IterableBase):
                     return response_model.tasks_from_chunks_async(json_chunks)
-                elif response_model.__name__.startswith("Partial"):
+                elif issubclass(response_model, PartialBase):
                     return response_model.model_from_chunks_async(json_chunks)
                 else:
                     raise ValueError(
@@ -108,9 +114,6 @@ def from_xai(
                 parsed._raw_response = raw
                 return parsed
         else:
-            if is_stream:
-                response_model = prepare_response_model(response_model)
-
             tool = xchat.tool(
                 name=response_model.__name__,
                 description=response_model.__doc__ or "",
@@ -124,9 +127,9 @@ def from_xai(
                     async for resp, _ in chat.stream()
                     if resp.tool_calls and resp.finish_reason == "REASON_INVALID"
                 )
-                if response_model.__name__.startswith("Iterable"):
+                if issubclass(response_model, IterableBase):
                     return response_model.tasks_from_chunks_async(args)
-                elif response_model.__name__.startswith("Partial"):
+                elif issubclass(response_model, PartialBase):
                     return response_model.model_from_chunks_async(args)
                 else:
                     raise ValueError(
@@ -155,7 +158,7 @@ def from_xai(
         call_kwargs.pop("context", None)
         call_kwargs.pop("hooks", None)
         # Check if streaming is requested
-        stream = call_kwargs.pop("stream", False)
+        is_stream = call_kwargs.pop("stream", False)
 
         chat = client.chat.create(model=model, messages=x_messages, **call_kwargs)
 
@@ -163,9 +166,11 @@ def from_xai(
             resp = chat.sample()
             return resp
 
+        if is_stream:
+            response_model = prepare_response_model(response_model)
+
         if mode == instructor.Mode.XAI_JSON:
-            if stream:
-                response_model = prepare_response_model(response_model)
+            if is_stream:
                 # code from xai_sdk.chat.parse
                 chat.proto.response_format.CopyFrom(
                     xchat.chat_pb2.ResponseFormat(
@@ -174,9 +179,9 @@ def from_xai(
                     )
                 )
                 json_chunks = (chunk.content for _, chunk in chat.stream())
-                if response_model.__name__.startswith("Iterable"):
+                if issubclass(response_model, IterableBase):
                     return response_model.tasks_from_chunks(json_chunks)
-                elif response_model.__name__.startswith("Partial"):
+                elif issubclass(response_model, PartialBase):
                     return response_model.model_from_chunks(json_chunks)
                 else:
                     raise ValueError(
@@ -187,8 +192,6 @@ def from_xai(
                 parsed._raw_response = raw
                 return parsed
         else:
-            if stream:
-                response_model = prepare_response_model(response_model)
             tool = xchat.tool(
                 name=response_model.__name__,
                 description=response_model.__doc__ or "",
@@ -196,16 +199,16 @@ def from_xai(
             )
             chat.proto.tools.append(tool)
             chat.proto.tool_choice.mode = xchat.chat_pb2.ToolMode.TOOL_MODE_AUTO
-            if stream:
+            if is_stream:
                 for resp, _ in chat.stream():
                     # For xAI, tool_calls are returned at the end of the response.
                     # Effectively, it is not a streaming response.
                     # See: https://docs.x.ai/docs/guides/function-calling
                     if resp.tool_calls:
                         args = resp.tool_calls[0].function.arguments
-                        if response_model.__name__.startswith("Iterable"):
+                        if issubclass(response_model, IterableBase):
                             return response_model.tasks_from_chunks(args)
-                        elif response_model.__name__.startswith("Partial"):
+                        elif issubclass(response_model, PartialBase):
                             return response_model.model_from_chunks(args)
                         else:
                             raise ValueError(
