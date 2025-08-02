@@ -325,8 +325,6 @@ class Audio(BaseModel):
         if isinstance(source, Path):
             return cls.from_path(source)
 
-        raise ValueError("Unable to determine audio type or unsupported audio format")
-
     @classmethod
     def autodetect_safely(cls, source: Union[str, Path]) -> Union[Image, str]:  # noqa: UP007
         """Safely attempt to autodetect an image from a source string or path.
@@ -499,8 +497,6 @@ class PDF(BaseModel):
             return cls.from_raw_base64(source)
         elif isinstance(source, Path):
             return cls.from_path(source)
-
-        raise ValueError("Unable to determine PDF type or unsupported PDF format")
 
     @classmethod
     def is_base64(cls, s: str) -> bool:
