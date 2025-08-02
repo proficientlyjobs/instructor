@@ -165,6 +165,8 @@ class Image(BaseModel):
     @classmethod
     @lru_cache
     def from_url(cls, url: str) -> Image:
+        if url.startswith("gs://"):
+            return cls.from_gs_url(url)
         if cls.is_base64(url):
             return cls.from_base64(url)
 
@@ -415,6 +417,8 @@ class PDF(BaseModel):
                 return cls.from_base64(source)
             elif source.startswith(("http://", "https://")):
                 return cls.from_url(source)
+            elif source.startswith("gs://"):
+                return cls.from_gs_url(source)
 
             try:
                 if Path(source).is_file():
@@ -481,8 +485,35 @@ class PDF(BaseModel):
             raise ValueError("Invalid or unsupported base64 PDF data") from e
 
     @classmethod
+    def from_gs_url(cls, data_uri: str) -> PDF:
+        """
+        Create a PDF instance from a Google Cloud Storage URL.
+        """
+        if not data_uri.startswith("gs://"):
+            raise ValueError("URL must start with gs://")
+
+        public_url = f"https://storage.googleapis.com/{data_uri[5:]}"
+
+        try:
+            response = requests.get(public_url)
+            response.raise_for_status()
+            media_type = response.headers.get("Content-Type", "application/pdf")
+            if media_type not in VALID_PDF_MIME_TYPES:
+                raise ValueError(f"Unsupported PDF format: {media_type}")
+
+            data = base64.b64encode(response.content).decode("utf-8")
+
+            return cls(source=data_uri, media_type=media_type, data=data)
+        except requests.RequestException as e:
+            raise ValueError(
+                "Failed to access GCS PDF (must be publicly readable)"
+            ) from e
+
+    @classmethod
     @lru_cache
     def from_url(cls, url: str) -> PDF:
+        if url.startswith("gs://"):
+            return cls.from_gs_url(url)
         parsed_url = urlparse(url)
         media_type, _ = mimetypes.guess_type(parsed_url.path)
 
