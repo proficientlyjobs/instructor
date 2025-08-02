@@ -304,8 +304,49 @@ class Audio(BaseModel):
     media_type: str = Field(description="MIME type of the audio")
 
     @classmethod
+    def autodetect(cls, source: str | Path) -> Audio:
+        """Attempt to autodetect an audio from a source string or Path."""
+        if isinstance(source, str):
+            if source.startswith(("http://", "https://")):
+                return cls.from_url(source)
+            if source.startswith("gs://"):
+                return cls.from_gs_url(source)
+            # Since detecting the max length of a file universally cross-platform is difficult,
+            # we'll just try/catch the Path conversion and file check
+            try:
+                path = Path(source)
+                if path.is_file():
+                    return cls.from_path(path)
+            except OSError:
+                pass  # Fall through to error
+
+            raise ValueError("Unable to determine audio source")
+
+        if isinstance(source, Path):
+            return cls.from_path(source)
+
+        raise ValueError("Unable to determine audio type or unsupported audio format")
+
+    @classmethod
+    def autodetect_safely(cls, source: Union[str, Path]) -> Union[Image, str]:  # noqa: UP007
+        """Safely attempt to autodetect an image from a source string or path.
+
+        Args:
+            source (Union[str,path]): The source string or path.
+        Returns:
+            An Image if the source is detected to be a valid image, otherwise
+            the source itself as a string.
+        """
+        try:
+            return cls.autodetect(source)
+        except ValueError:
+            return str(source)
+
+    @classmethod
     def from_url(cls, url: str) -> Audio:
         """Create an Audio instance from a URL."""
+        if url.startswith("gs://"):
+            return cls.from_gs_url(url)
         response = requests.get(url)
         content_type = response.headers.get("content-type")
         assert content_type in VALID_AUDIO_MIME_TYPES, (
@@ -337,6 +378,31 @@ class Audio(BaseModel):
 
         data = base64.b64encode(path.read_bytes()).decode("utf-8")
         return cls(source=str(path), data=data, media_type=mime_type)
+
+    @classmethod
+    def from_gs_url(cls, data_uri: str) -> Audio:
+        """
+        Create an Audio instance from a Google Cloud Storage URL.
+        """
+        if not data_uri.startswith("gs://"):
+            raise ValueError("URL must start with gs://")
+
+        public_url = f"https://storage.googleapis.com/{data_uri[5:]}"
+
+        try:
+            response = requests.get(public_url)
+            response.raise_for_status()
+            media_type = response.headers.get("Content-Type")
+            if media_type not in VALID_AUDIO_MIME_TYPES:
+                raise ValueError(f"Unsupported audio format: {media_type}")
+
+            data = base64.b64encode(response.content).decode("utf-8")
+
+            return cls(source=data_uri, media_type=media_type, data=data)
+        except requests.RequestException as e:
+            raise ValueError(
+                "Failed to access GCS audio (must be publicly readable)"
+            ) from e
 
     def to_openai(self, mode: Mode) -> dict[str, Any]:
         """Convert the Audio instance to OpenAI's API format."""
