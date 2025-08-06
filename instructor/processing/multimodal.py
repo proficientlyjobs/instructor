@@ -305,6 +305,8 @@ class Audio(BaseModel):
     def autodetect(cls, source: str | Path) -> Audio:
         """Attempt to autodetect an audio from a source string or Path."""
         if isinstance(source, str):
+            if cls.is_base64(source):
+                return cls.from_base64(source)
             if source.startswith(("http://", "https://")):
                 return cls.from_url(source)
             if source.startswith("gs://"):
@@ -337,6 +339,22 @@ class Audio(BaseModel):
             return cls.autodetect(source)
         except ValueError:
             return str(source)
+
+    @classmethod
+    def is_base64(cls, s: str) -> bool:
+        return bool(re.match(r"^data:audio/[a-zA-Z0-9+-]+;base64,", s))
+
+    @classmethod
+    def from_base64(cls, data_uri: str) -> Audio:
+        header, encoded = data_uri.split(",", 1)
+        media_type = header.split(":")[1].split(";")[0]
+        if media_type not in VALID_AUDIO_MIME_TYPES:
+            raise ValueError(f"Unsupported audio format: {media_type}")
+        return cls(
+            source=data_uri,
+            media_type=media_type,
+            data=encoded,
+        )
 
     @classmethod
     def from_url(cls, url: str) -> Audio:
