@@ -1,6 +1,13 @@
 import pytest
 from pathlib import Path
-from instructor.processing.multimodal import Image, convert_contents, convert_messages
+from instructor.processing.multimodal import (
+    PDF,
+    Audio,
+    Image,
+    autodetect_media,
+    convert_contents,
+    convert_messages,
+)
 from instructor.mode import Mode
 from unittest.mock import patch, MagicMock
 import instructor
@@ -374,3 +381,57 @@ def test_raw_base64_autodetect_png(base64_png):
     image = Image.autodetect(raw_base_64)
     assert image.media_type == "image/png"
     assert image.source == image.data == raw_base_64
+
+
+def test_autodetect_media_data_uris():
+    img_uri = (
+        "data:image/png;base64,"
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII="
+    )
+    pdf_uri = "data:application/pdf;base64,JVBERi0xLjQK"  # "%PDF-1.4\n"
+    aud_uri = "data:audio/wav;base64,UklGRiQAAABXQVZF"  # minimal header-ish
+
+    img = autodetect_media(img_uri)
+    pdf = autodetect_media(pdf_uri)
+    aud = autodetect_media(aud_uri)
+
+    assert isinstance(img, Image)
+    assert img.media_type == "image/png"
+
+    assert isinstance(pdf, PDF)
+    assert pdf.media_type == "application/pdf"
+
+    assert isinstance(aud, Audio)
+    assert aud.media_type == "audio/wav"
+
+
+def test_convert_messages_autodetect_media():
+    img_uri = (
+        "data:image/png;base64,"
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII="
+    )
+    pdf_uri = "data:application/pdf;base64,JVBERi0xLjQK"
+
+    messages = [
+        {"role": "user", "content": ["hello", img_uri, pdf_uri]},
+    ]
+
+    out = convert_messages(messages, mode=Mode.RESPONSES_TOOLS, autodetect_images=True)
+    assert isinstance(out, list) and len(out) == 1
+
+    content = out[0]["content"]
+    assert isinstance(content, list) and len(content) == 3
+
+    # Text
+    assert content[0]["type"] in {"input_text", "text"}
+    assert content[0]["text"] == "hello"
+
+    # Image → input_image with data URI
+    assert content[1]["type"] == "input_image"
+    assert isinstance(content[1].get("image_url"), str)
+    assert content[1]["image_url"].startswith("data:image/png;base64,")
+
+    # PDF → input_file with data URI
+    assert content[2]["type"] == "input_file"
+    assert isinstance(content[2].get("file_data"), str)
+    assert content[2]["file_data"].startswith("data:application/pdf;base64,")
