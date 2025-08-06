@@ -847,6 +847,46 @@ def convert_contents(
     return converted_contents
 
 
+def autodetect_media(
+    source: str | Path | Image | Audio | PDF,
+) -> Image | Audio | PDF | str:
+    """Autodetect images, audio, or PDFs from a given source.
+
+    Args:
+        source: URL, file path, Path, or data URI to inspect.
+
+    Returns:
+        The detected :class:`Image`, :class:`Audio`, or :class:`PDF` instance.
+        If detection fails, the original source is returned.
+    """
+    if isinstance(source, (Image, Audio, PDF)):
+        return source
+
+    # Normalize once for cheap checks and mimetype guess
+    source = str(source)
+
+    if source.startswith("data:image/"):
+        return Image.autodetect_safely(source)
+    if source.startswith("data:audio/"):
+        return Audio.autodetect_safely(source)
+    if source.startswith("data:application/pdf"):
+        return PDF.autodetect_safely(source)
+
+    media_type, _ = mimetypes.guess_type(source)
+    if media_type in VALID_MIME_TYPES:
+        return Image.autodetect_safely(source)
+    if media_type in VALID_AUDIO_MIME_TYPES:
+        return Audio.autodetect_safely(source)
+    if media_type in VALID_PDF_MIME_TYPES:
+        return PDF.autodetect_safely(source)
+
+    for cls in (Image, Audio, PDF):
+        item = cls.autodetect_safely(source)  # type: ignore[arg-type]
+        if not isinstance(item, str):
+            return item
+    return source
+
+
 def convert_messages(
     messages: list[
         dict[
@@ -856,7 +896,8 @@ def convert_messages(
                 dict[str, Any],
                 Image,
                 Audio,
-                list[Union[str, dict[str, Any], Image, Audio]],  # noqa: UP007
+                PDF,
+                list[Union[str, dict[str, Any], Image, Audio, PDF]],  # noqa: UP007
             ],
         ]
     ],
@@ -882,10 +923,10 @@ def convert_messages(
         }
         if autodetect_images:
             if isinstance(content, list):
-                new_content: list[str | dict[str, Any] | Image | Audio] = []  # noqa: UP007
+                new_content: list[str | dict[str, Any] | Image | Audio | PDF] = []  # noqa: UP007
                 for item in content:
                     if isinstance(item, str):
-                        new_content.append(Image.autodetect_safely(item))
+                        new_content.append(autodetect_media(item))
                     elif is_image_params(item):
                         new_content.append(
                             ImageWithCacheControl.from_image_params(
@@ -896,7 +937,7 @@ def convert_messages(
                         new_content.append(item)
                 content = new_content
             elif isinstance(content, str):
-                content = Image.autodetect_safely(content)
+                content = autodetect_media(content)
             elif is_image_params(content):
                 content = ImageWithCacheControl.from_image_params(
                     cast(ImageParams, content)
@@ -944,15 +985,12 @@ def extract_genai_multimodal_content(
         # Now we need to support a few cases
         for content_part in content.parts:
             if content_part.text and autodetect_images:
-                # Detect if the text is an image
-                converted_item = Image.autodetect_safely(content_part.text)
+                converted_item = autodetect_media(content_part.text)
 
-                # We only do autodetection for images for now
-                if isinstance(converted_item, Image):
+                if isinstance(converted_item, (Image, Audio, PDF)):
                     converted_contents.append(converted_item.to_genai())
                     continue
 
-                # If it's not an image or audio, we just return the text
                 converted_contents.append(content_part)
             else:
                 converted_contents.append(content_part)
