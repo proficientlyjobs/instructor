@@ -119,9 +119,13 @@ class Image(BaseModel):
         )
 
     @classmethod
-    def from_gs_url(cls, data_uri: str) -> Image:
+    def from_gs_url(cls, data_uri: str, timeout: int = 30) -> Image:
         """
         Create an Image instance from a Google Cloud Storage URL.
+
+        Args:
+            data_uri: GCS URL starting with gs://
+            timeout: Request timeout in seconds (default: 30)
         """
         if not data_uri.startswith("gs://"):
             raise ValueError("URL must start with gs://")
@@ -129,7 +133,7 @@ class Image(BaseModel):
         public_url = f"https://storage.googleapis.com/{data_uri[5:]}"
 
         try:
-            response = requests.get(public_url)
+            response = requests.get(public_url, timeout=timeout)
             response.raise_for_status()
             media_type = response.headers.get("Content-Type")
             if media_type not in VALID_MIME_TYPES:
@@ -139,7 +143,9 @@ class Image(BaseModel):
 
             return cls(source=data_uri, media_type=media_type, data=data)
         except requests.RequestException as e:
-            raise ValueError(f"We only support public images for now") from e
+            raise ValueError(
+                "Failed to access GCS image (must be publicly readable)"
+            ) from e
 
     @classmethod  # Caching likely unnecessary
     def from_raw_base64(cls, data: str) -> Image:
@@ -394,9 +400,13 @@ class Audio(BaseModel):
         return cls(source=str(path), data=data, media_type=mime_type)
 
     @classmethod
-    def from_gs_url(cls, data_uri: str) -> Audio:
+    def from_gs_url(cls, data_uri: str, timeout: int = 30) -> Audio:
         """
         Create an Audio instance from a Google Cloud Storage URL.
+
+        Args:
+            data_uri: GCS URL starting with gs://
+            timeout: Request timeout in seconds (default: 30)
         """
         if not data_uri.startswith("gs://"):
             raise ValueError("URL must start with gs://")
@@ -404,7 +414,7 @@ class Audio(BaseModel):
         public_url = f"https://storage.googleapis.com/{data_uri[5:]}"
 
         try:
-            response = requests.get(public_url)
+            response = requests.get(public_url, timeout=timeout)
             response.raise_for_status()
             media_type = response.headers.get("Content-Type")
             if media_type not in VALID_AUDIO_MIME_TYPES:
@@ -578,9 +588,13 @@ class PDF(BaseModel):
             raise ValueError("Invalid or unsupported base64 PDF data") from e
 
     @classmethod
-    def from_gs_url(cls, data_uri: str) -> PDF:
+    def from_gs_url(cls, data_uri: str, timeout: int = 30) -> PDF:
         """
         Create a PDF instance from a Google Cloud Storage URL.
+
+        Args:
+            data_uri: GCS URL starting with gs://
+            timeout: Request timeout in seconds (default: 30)
         """
         if not data_uri.startswith("gs://"):
             raise ValueError("URL must start with gs://")
@@ -588,7 +602,7 @@ class PDF(BaseModel):
         public_url = f"https://storage.googleapis.com/{data_uri[5:]}"
 
         try:
-            response = requests.get(public_url)
+            response = requests.get(public_url, timeout=timeout)
             response.raise_for_status()
             media_type = response.headers.get("Content-Type", "application/pdf")
             if media_type not in VALID_PDF_MIME_TYPES:
