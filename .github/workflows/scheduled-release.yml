@@ -9,7 +9,7 @@ on:
       skip_tests:
         description: 'Skip LLM tests (use for testing workflow)'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
     
     # Optional: Run LLM tests if you have API keys in secrets
     - name: Run LLM tests
-      if: github.event.inputs.skip_tests != 'true' && (secrets.OPENAI_API_KEY != '' || secrets.ANTHROPIC_API_KEY != '')
+      if: github.event.inputs.skip_tests != 'true'
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
