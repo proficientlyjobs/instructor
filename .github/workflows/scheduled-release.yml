@@ -11,6 +11,11 @@ on:
         required: false
         default: false
         type: boolean
+      dry_run:
+        description: 'Dry run - dont push changes or create release'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   test-and-release:
@@ -53,9 +58,17 @@ jobs:
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       run: |
+        echo "Running basic LLM tests if API keys are available..."
         # Run a subset of LLM tests to verify basic functionality
-        uv run pytest tests/llm/test_openai/test_basics.py --tb=short -v --maxfail=3 || true
-        uv run pytest tests/llm/test_anthropic/test_basics.py --tb=short -v --maxfail=3 || true
+        if [ ! -z "$OPENAI_API_KEY" ]; then
+          echo "Testing OpenAI integration..."
+          uv run pytest tests/llm/test_openai/test_basics.py --tb=short -v --maxfail=1 || echo "OpenAI tests failed"
+        fi
+        if [ ! -z "$ANTHROPIC_API_KEY" ]; then
+          echo "Testing Anthropic integration..."
+          uv run pytest tests/llm/test_anthropic/test_basics.py --tb=short -v --maxfail=1 || echo "Anthropic tests failed"
+        fi
+        echo "LLM tests completed (non-blocking)"
     
     - name: Check for changes since last release
       id: changes
@@ -196,13 +209,13 @@ jobs:
         git tag "v${{ steps.bump_version.outputs.new_version }}"
     
     - name: Push changes
-      if: steps.changes.outputs.has_changes == 'true'
+      if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
       run: |
         git push origin main
         git push origin "v${{ steps.bump_version.outputs.new_version }}"
     
     - name: Create GitHub Release
-      if: steps.changes.outputs.has_changes == 'true'
+      if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
       uses: ncipollo/release-action@v1
       with:
         tag: "v${{ steps.bump_version.outputs.new_version }}"
@@ -210,6 +223,13 @@ jobs:
         bodyFile: "CHANGELOG.md"
         draft: false
         prerelease: false
+    
+    - name: Dry run summary
+      if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run == 'true'
+      run: |
+        echo "🧪 DRY RUN MODE - No changes pushed"
+        echo "Would have released: v${{ steps.bump_version.outputs.new_version }}"
+        cat CHANGELOG.md
     
     # Optional: Publish to PyPI (uncomment if you want automatic PyPI releases)
     # - name: Build and publish to PyPI
