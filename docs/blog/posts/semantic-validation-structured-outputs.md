@@ -341,7 +341,7 @@ This approach isn't just a technical improvement-it's a fundamental shift in how
 
 ## Related Documentation
 - [Validation Fundamentals](../../concepts/validation.md) - Core validation concepts
-- [LLM Validation](../../concepts/llm_validation.md) - Using LLMs for validation
+- [Semantic Validation](../../concepts/semantic_validation.md) - Using LLMs for validation
 
 ## See Also
 - [Validation Deep Dive](validation-part1.md) - Foundation validation concepts
