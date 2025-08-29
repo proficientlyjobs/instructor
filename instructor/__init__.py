@@ -12,6 +12,7 @@ from .dsl import (
 
 from .validation import llm_validator, openai_moderation
 from .processing.function_calls import OpenAISchema, openai_schema
+from .processing import function_calls
 from .processing.schema import (
     generate_openai_schema,
     generate_anthropic_schema,
@@ -59,6 +60,7 @@ __all__ = [
     "llm_validator",
     "openai_moderation",
     "hooks",
+    "function_calls",
 ]
 
 
