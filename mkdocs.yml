@@ -340,6 +340,7 @@ nav:
   - Blog:
       - "blog/index.md"
 plugins:
+  - llmstxt
   - redirects:
       redirect_maps:
          jobs.md: https://jobs.applied-llms.org/
