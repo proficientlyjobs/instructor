@@ -39,7 +39,7 @@ Pydantic, combined with function calling, offers a superior alternative for stru
 - Validators to improve system reliability
 - Cleaner, more maintainable code
 
-For more details on how Pydantic enhances data validation, check out our [Data Validation with Pydantic](../..../../concepts/models.md) guide.
+For more details on how Pydantic enhances data validation, check out our [Data Validation with Pydantic](../../concepts/models.md) guide.
 
 And here's the kicker: nothing's really changed in the past year. The core API is still just:
 
@@ -62,15 +62,15 @@ Since last year:
 - Built a version in Rust
 - Seen 40% month-over-month growth in the Python library
 
-We now support [Ollama](../..../../integrations/ollama.md), [llama-cpp-python](../..../../integrations/llama-cpp-python.md), [Anthropic](../..../../integrations/anthropic.md), [Cohere](../..../../integrations/cohere.md), [Google](../..../../integrations/google.md), [Vertex AI](../..../../integrations/vertex.md), and more. As long as language models support function calling capabilities, this API will remain standard.
+We now support [Ollama](../../integrations/ollama.md), [llama-cpp-python](../../integrations/llama-cpp-python.md), [Anthropic](../../integrations/anthropic.md), [Cohere](../../integrations/cohere.md), [Google](../../integrations/google.md), [Vertex AI](../../integrations/vertex.md), and more. As long as language models support function calling capabilities, this API will remain standard.
 
 ## Key Features
 
-1. **Streaming with Structure**: Get objects as they return, improving latency while maintaining structured output. Learn more about this in our [Streaming Support](../..../../concepts/partial.md) guide.
+1. **Streaming with Structure**: Get objects as they return, improving latency while maintaining structured output. Learn more about this in our [Streaming Support](../../concepts/partial.md) guide.
 
-2. **Partials**: Validate entire objects, enabling real-time rendering for generative UI without complex JSON parsing. See our [Partial](../..../../concepts/partial.md) documentation for implementation details.
+2. **Partials**: Validate entire objects, enabling real-time rendering for generative UI without complex JSON parsing. See our [Partial](../../concepts/partial.md) documentation for implementation details.
 
-3. **Validators**: Add custom logic to ensure correct outputs, with the ability to retry on errors. Dive deeper into this topic in our [Reasking and Validation](../..../../concepts/reask_validation.md) guide.
+3. **Validators**: Add custom logic to ensure correct outputs, with the ability to retry on errors. Dive deeper into this topic in our [Reasking and Validation](../../concepts/reask_validation.md) guide.
 
 ## Real-World Applications
 

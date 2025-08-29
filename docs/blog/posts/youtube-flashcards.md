@@ -318,7 +318,7 @@ structure your application, many avenues open up depending on your goals!
 Instructor improves the LLM's reasoning by providing structure. Nesting models and adding
 constraints allow to [get facts with citations](../../examples/exact_citations.md)
 or [extract a knowledge graph](../../examples/knowledge_graph.md)
-in a few lines of code. Also, [retries](../..../../concepts/retrying.md)
+in a few lines of code. Also, [retries](../../concepts/retrying.md)
 enable the LLM to self-correct.
 
 Burr sets the boundaries between users, LLMs, and the rest of your system. You can add

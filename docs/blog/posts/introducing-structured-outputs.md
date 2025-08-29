@@ -41,7 +41,7 @@ In this article, we'll show how `instructor` addresses many of these challenges 
 
 ### Limited Validation and Retry Logic
 
-Validation is crucial for building reliable and effective applications. We want to catch errors in real time using `Pydantic` [validators](../..../../concepts/reask_validation.md) in order to allow our LLM to correct its responses on the fly.
+Validation is crucial for building reliable and effective applications. We want to catch errors in real time using `Pydantic` [validators](../../concepts/reask_validation.md) in order to allow our LLM to correct its responses on the fly.
 
 Let's see an example of a simple validator below which ensures user names are always in uppercase.
 
@@ -202,7 +202,7 @@ This built-in retry logic allows for targeted correction to the generated respon
 
 ### Real-time Streaming Validation
 
-A common use-case is to define a single schema and extract multiple instances of it. With `instructor`, doing this is relatively straightforward by using [our `create_iterable` method](../..../../concepts/lists.md).
+A common use-case is to define a single schema and extract multiple instances of it. With `instructor`, doing this is relatively straightforward by using [our `create_iterable` method](../../concepts/lists.md).
 
 ```python
 client = instructor.from_openai(openai.OpenAI(), mode=instructor.Mode.TOOLS_STRICT)
@@ -234,7 +234,7 @@ for user in users:
     #> name='John' age=10
 ```
 
-Other times, we might also want to stream out information as it's dynamically generated into some sort of frontend component With `instructor`, you'll be able to do just that [using the `create_partial` method](../..../../concepts/partial.md).
+Other times, we might also want to stream out information as it's dynamically generated into some sort of frontend component With `instructor`, you'll be able to do just that [using the `create_partial` method](../../concepts/partial.md).
 
 ```python
 import instructor

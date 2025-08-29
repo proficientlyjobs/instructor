@@ -213,8 +213,8 @@ Instructor, with Pydantic, simplifies interaction with language models. It is us
 
 - [Getting Started Guide](../../index.md) - Learn how to install and use Instructor
 - [Model Providers](../../integrations/index.md) - Explore supported LLM providers
-- [Validation Context](../..../../concepts/reask_validation.md) - Understand how to validate LLM outputs
-- [Response Models](../..../../concepts/models.md) - Deep dive into defining structured outputs
+- [Validation Context](../../concepts/reask_validation.md) - Understand how to validate LLM outputs
+- [Response Models](../../concepts/models.md) - Deep dive into defining structured outputs
 
 ## See Also
 

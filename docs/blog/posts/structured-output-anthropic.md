@@ -142,7 +142,7 @@ As the AI landscape continues to evolve, staying up-to-date with the latest tool
 
 ## Related Documentation
 - [How Patching Works](../../concepts/patching.md) - Understand provider integration
-- [Anthropic Integration](../..../../integrations/anthropic.md) - Complete setup guide
+- [Anthropic Integration](../../integrations/anthropic.md) - Complete setup guide
 
 ## See Also
 - [Anthropic Prompt Caching](anthropic-prompt-caching.md) - Optimize Anthropic costs

@@ -726,7 +726,7 @@ async def extract_async(data: str) -> UserDetail:
 
 ### Caching with Streaming Responses
 
-Combine caching with [streaming responses](../..../../concepts/partial.md) for optimal user experience:
+Combine caching with [streaming responses](../../concepts/partial.md) for optimal user experience:
 
 ```python
 @instructor_cache
@@ -939,14 +939,14 @@ These are **actual results** from running the examples, not theoretical projecti
 ## Related Resources
 
 ### Core Concepts
-- [Caching Strategies](../..../../concepts/caching.md) - Deep dive into caching patterns for LLM applications
-- [Prompt Caching](../..../../concepts/prompt_caching.md) - Provider-specific caching features from OpenAI and Anthropic
-- [Performance Optimization](../..../../concepts/parallel.md) - Parallel processing for better performance
-- [Dictionary Operations](../..../../concepts/dictionary_operations.md) - Low-level optimization techniques
+- [Caching Strategies](../../concepts/caching.md) - Deep dive into caching patterns for LLM applications
+- [Prompt Caching](../../concepts/prompt_caching.md) - Provider-specific caching features from OpenAI and Anthropic
+- [Performance Optimization](../../concepts/parallel.md) - Parallel processing for better performance
+- [Dictionary Operations](../../concepts/dictionary_operations.md) - Low-level optimization techniques
 
 ### Working Examples
 - [**Caching Examples**](../../examples/caching/) - **Complete working examples** validating all strategies
-- [Streaming Responses](../..../../concepts/partial.md) - Combine caching with real-time streaming
+- [Streaming Responses](../../concepts/partial.md) - Combine caching with real-time streaming
 - [Async Processing](../../blog/posts/learn-async.md) - Async patterns for high-throughput applications
 - [Batch Processing](../../examples/batch_job_oai.md) - Efficient batch operations with caching
 

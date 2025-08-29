@@ -91,7 +91,7 @@ As with any AI-powered feature, it's crucial to consider ethical implications an
 
 ## Related Documentation
 - [Multimodal Guide](../../concepts/multimodal.md) - Comprehensive multimodal reference
-- [OpenAI Integration](../..../../integrations/openai.md) - Full OpenAI setup
+- [OpenAI Integration](../../integrations/openai.md) - Full OpenAI setup
 
 ## See Also
 - [Gemini Multimodal](multimodal-gemini.md) - Alternative multimodal approach

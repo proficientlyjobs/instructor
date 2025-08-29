@@ -85,7 +85,7 @@ for image_file in image_files:
     images.append(image)
 ```
 
-We provide a variety of different methods for loading images, including from a URL, local file, and even from a base64 encoded string which you [can read about here](../..../../concepts/multimodal.md)
+We provide a variety of different methods for loading images, including from a URL, local file, and even from a base64 encoded string which you [can read about here](../../concepts/multimodal.md)
 
 ### Defining a response model
 

@@ -225,7 +225,7 @@ client = from_anthropic(Anthropic())
 
 Production applications need reliable outputs. Instructor handles this by validating all outputs against your desired response model and automatically retrying outputs that fail validation.
 
-With [our tenacity integration](../..../../concepts/retrying.md), you get full control over the retries if needed, allowing you to mechanisms like exponential backoff and other retry strategies easily.
+With [our tenacity integration](../../concepts/retrying.md), you get full control over the retries if needed, allowing you to mechanisms like exponential backoff and other retry strategies easily.
 
 ```python
 import openai
