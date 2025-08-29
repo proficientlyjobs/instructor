@@ -265,7 +265,7 @@ for user in users:
 
 Instructor has always supported validation and error handling. But now, we've added a new `validation_context` argument to the `create` call. This allows you to pass in a `ValidationContext` object which will be passed to the `response_model`. This allows you to add custom validation logic to the `response_model`.
 
-If you want to learn more check out the docs on [retrying](../../concepts/retrying.md) and [reasking](../../concepts/reask_validation.md)
+If you want to learn more check out the docs on [retrying](../..../../concepts/retrying.md) and [reasking](../..../../concepts/reask_validation.md)
 
 ## Support in multiple languages
 

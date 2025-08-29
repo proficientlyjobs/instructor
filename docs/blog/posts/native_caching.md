@@ -231,7 +231,7 @@ Native caching delivers the same dramatic performance improvements you'd expect:
 - **DiskCache**: 5-10x improvement with persistence benefits
 - **Cost Reduction**: 50-90% API cost savings depending on cache hit rate
 
-For a comprehensive deep-dive into caching strategies and performance analysis, check out our [complete caching guide](../caching.md).
+For a comprehensive deep-dive into caching strategies and performance analysis, check out our [complete caching guide](caching.md).
 
 ## Getting Started
 
@@ -270,10 +270,10 @@ Ready to enable native caching? Here's your quick start:
 
 ## Learn More
 
-For detailed information about cache design, custom implementations, and advanced patterns, visit our [Caching Concepts](../../concepts/caching.md) documentation.
+For detailed information about cache design, custom implementations, and advanced patterns, visit our [Caching Concepts](../..../../concepts/caching.md) documentation.
 
 The native caching feature represents our commitment to making high-performance LLM applications simple and accessible. No more complex caching logic - just fast, cost-effective structured outputs out of the box.
 
 ---
 
-*Have questions about native caching or want to share your use case? Join the discussion in our [GitHub repository](https://github.com/jxnl/instructor) or check out the [complete documentation](../../concepts/caching.md).*
+*Have questions about native caching or want to share your use case? Join the discussion in our [GitHub repository](https://github.com/jxnl/instructor) or check out the [complete documentation](../..../../concepts/caching.md).*

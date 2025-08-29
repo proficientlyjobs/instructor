@@ -318,7 +318,7 @@ structure your application, many avenues open up depending on your goals!
 Instructor improves the LLM's reasoning by providing structure. Nesting models and adding
 constraints allow to [get facts with citations](../../examples/exact_citations.md)
 or [extract a knowledge graph](../../examples/knowledge_graph.md)
-in a few lines of code. Also, [retries](../../concepts/retrying.md)
+in a few lines of code. Also, [retries](../..../../concepts/retrying.md)
 enable the LLM to self-correct.
 
 Burr sets the boundaries between users, LLMs, and the rest of your system. You can add
@@ -332,11 +332,11 @@ via script, a web app (Streamlit, Gradio, etc.), or as a [web service](https://b
 
 The `ApplicationBuilder` provides many features to productionize your app:
 
-- [Persistence](https://burr.dagworks.io/concepts/state-persistence/): save and restore `State`
+- [Persistence](https://burr.dagworks.io../../concepts/state-persistence/.md): save and restore `State`
   (e.g., store conversation history)
-- [Observability](https://burr.dagworks.io/concepts/additional-visibility/): log and monitor
+- [Observability](https://burr.dagworks.io../../concepts/additional-visibility/.md): log and monitor
   application telemetry (e.g., LLM calls, number of tokens used, errors and retries)
-- [Streaming and async](https://burr.dagworks.io/concepts/streaming-actions/): create snappy
+- [Streaming and async](https://burr.dagworks.io../../concepts/streaming-actions/.md): create snappy
   user interfaces by streaming LLM responses and running actions asynchronously.
 
 For example, you can log telemetry into Burr UI in a few lines of code. First, instrument the

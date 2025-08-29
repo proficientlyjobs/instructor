@@ -95,7 +95,7 @@ The combination of Gemini and Instructor offers several key advantages over trad
 
 **Simple Integration** - Unlike traditional approaches that require complex document processing pipelines, chunking strategies, and embedding databases, you can directly process PDFs with just a few lines of code. This dramatically reduces development time and maintenance overhead.
 
-**Structured Output** - Instructor's Pydantic integration ensures you get exactly the data structure you need. The model's outputs are automatically validated and typed, making it easier to build reliable applications. If the extraction fails, Instructor automatically handles the retries for you with support for [custom retry logic using tenacity](../../concepts/retrying.md).
+**Structured Output** - Instructor's Pydantic integration ensures you get exactly the data structure you need. The model's outputs are automatically validated and typed, making it easier to build reliable applications. If the extraction fails, Instructor automatically handles the retries for you with support for [custom retry logic using tenacity](../..../../concepts/retrying.md).
 
 **Multimodal Support** - Gemini's multimodal capabilities mean this same approach works for various file types. You can process images, videos, and audio files all in the same api request. Check out our [multimodal processing guide](./multimodal-gemini.md) to see how we extract structured data from travel videos.
 
@@ -108,11 +108,11 @@ By combining Gemini's multimodal capabilities with Instructor's structured outpu
 No more wrestling with parsing rules, managing embeddings, or building complex pipelines - just define your data model and let the LLM do the heavy lifting.
 
 ## Related Documentation
-- [Multimodal Processing](/concepts/multimodal) - Core multimodal concepts
+- [Multimodal Processing](../../concepts/multimodal.md) - Core multimodal concepts
 
 ## See Also
-- [Gemini Multimodal Features](multimodal-gemini) - Full Gemini capabilities
-- [PDF Citation Generation](generating-pdf-citations) - Extract citations from PDFs
-- [RAG and Beyond](rag-and-beyond) - Advanced document processing
+- [Gemini Multimodal Features](multimodal-gemini.md) - Full Gemini capabilities
+- [PDF Citation Generation](generating-pdf-citations.md) - Extract citations from PDFs
+- [RAG and Beyond](rag-and-beyond.md) - Advanced document processing
 
 If you liked this, give `instructor` a try today and see how much easier structured outputs makes working with LLMs become. [Get started with Instructor today!](../../index.md)

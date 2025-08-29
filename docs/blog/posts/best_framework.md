@@ -61,18 +61,18 @@ print(user)  # (2)!
 
 Other features on instructor, in and out of the llibrary are:
 
-1. Ability to use [Tenacity in retrying logic](../../concepts/retrying.md)
-2. Ability to use [Pydantic's validation context](../../concepts/reask_validation.md)
-3. [Parallel Tool Calling](../../concepts/parallel.md) with correct types
-4. Streaming [Partial](../../concepts/partial.md) and [Iterable](../../concepts/iterable.md) data.
-5. Returning [Primitive](../../concepts/types.md) Types and [Unions](../../concepts/unions.md) as well!
+1. Ability to use [Tenacity in retrying logic](../..../../concepts/retrying.md)
+2. Ability to use [Pydantic's validation context](../..../../concepts/reask_validation.md)
+3. [Parallel Tool Calling](../..../../concepts/parallel.md) with correct types
+4. Streaming [Partial](../..../../concepts/partial.md) and [Iterable](../..../../concepts/iterable.md) data.
+5. Returning [Primitive](../..../../concepts/types.md) Types and [Unions](../..../../concepts/unions.md) as well!
 6. Lots of [Cookbooks](../../examples/index.md), [Tutorials](../../tutorials/1-introduction.ipynb), and comprehensive Documentation in our [Integration Guides](../../integrations/index.md)
 
 ## Instructor's Broad Applicability
 
 One of the key strengths of Instructor is that it's designed as a lightweight patch over the official OpenAI Python SDK. This means it can be easily integrated not just with OpenAI's hosted API service, but with any provider or platform that exposes an interface compatible with the OpenAI SDK.
 
-For example, providers like [Together](../../integrations/together.md), [Ollama](../../integrations/ollama.md), [Groq](../../integrations/groq.md), and [llama-cpp-python](../../integrations/llama-cpp-python.md) all either use or mimic the OpenAI Python SDK under the hood. With Instructor's zero-overhead patching approach, teams can immediately start deriving structured data outputs from any of these providers. There's no need for custom integration work.
+For example, providers like [Together](../..../../integrations/together.md), [Ollama](../..../../integrations/ollama.md), [Groq](../..../../integrations/groq.md), and [llama-cpp-python](../..../../integrations/llama-cpp-python.md) all either use or mimic the OpenAI Python SDK under the hood. With Instructor's zero-overhead patching approach, teams can immediately start deriving structured data outputs from any of these providers. There's no need for custom integration work.
 
 ## Direct access to the messages array
 
@@ -90,13 +90,13 @@ Instructor solves the "string hellll" of unstructured LLM outputs. It allows tea
 
 ## Related Concepts
 
-- [Philosophy](../../concepts/philosophy.md) - Understand Instructor's design principles
-- [Patching](../../concepts/patching.md) - Learn how Instructor patches LLM clients
-- [Retrying](../../concepts/retrying.md) - Handle validation failures gracefully
-- [Streaming](../../concepts/partial.md) - Work with streaming responses
+- [Philosophy](../..../../concepts/philosophy.md) - Understand Instructor's design principles
+- [Patching](../..../../concepts/patching.md) - Learn how Instructor patches LLM clients
+- [Retrying](../..../../concepts/retrying.md) - Handle validation failures gracefully
+- [Streaming](../..../../concepts/partial.md) - Work with streaming responses
 
 ## See Also
 
 - [Introduction to Instructor](introduction.md) - Get started with structured outputs
 - [Integration Guides](../../integrations/index.md) - See all supported providers
-- [Type Examples](../../concepts/types.md) - Explore different response types
+- [Type Examples](../..../../concepts/types.md) - Explore different response types
