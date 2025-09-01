@@ -1,58 +1,26 @@
-"""
-Backward compatibility shim for instructor.multimodal imports.
+"""Backwards compatibility module for instructor.multimodal.
 
-This module provides backward compatibility for the old import path:
-    from instructor.multimodal import PDF, Image, Audio
-
-The new import path is:
-    from instructor.processing.multimodal import PDF, Image, Audio
-
-This shim will be removed in a future major version (v2.0.0).
+This module provides lazy imports to maintain backwards compatibility.
 """
 
 import warnings
 
-# Import all multimodal classes from the new location
-from instructor.processing.multimodal import (
-    PDF,
-    Image,
-    Audio,
-    ImageParamsBase,
-    ImageParams,
-    CacheControlType,
-    OptionalCacheControlType,
-    VALID_MIME_TYPES,
-    VALID_AUDIO_MIME_TYPES,
-    VALID_PDF_MIME_TYPES,
-    autodetect_media,
-    convert_contents,
-    convert_messages,
-    extract_genai_multimodal_content,
-)
 
-# Issue deprecation warning when this module is imported
-warnings.warn(
-    "Importing from 'instructor.multimodal' is deprecated and will be removed in v2.0.0. "
-    "Please update your imports to use 'instructor.processing.multimodal' instead:\n"
-    "  from instructor.processing.multimodal import PDF, Image, Audio",
-    DeprecationWarning,
-    stacklevel=2
-)
-
-# Make all imports available at module level for backward compatibility
-__all__ = [
-    "PDF",
-    "Image", 
-    "Audio",
-    "ImageParamsBase",
-    "ImageParams",
-    "CacheControlType",
-    "OptionalCacheControlType",
-    "VALID_MIME_TYPES",
-    "VALID_AUDIO_MIME_TYPES",
-    "VALID_PDF_MIME_TYPES",
-    "autodetect_media",
-    "convert_contents",
-    "convert_messages",
-    "extract_genai_multimodal_content",
-]
+def __getattr__(name: str):
+    """Lazy import to provide backward compatibility for multimodal imports."""
+    # Issue deprecation warning when accessing multimodal imports
+    warnings.warn(
+        "Importing from 'instructor.multimodal' is deprecated and will be removed in v2.0.0. "
+        f"Please update your imports to use 'instructor.processing.multimodal.{name}' instead:\n"
+        "  from instructor.processing.multimodal import PDF, Image, Audio",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    
+    from .processing import multimodal as processing_multimodal
+    
+    # Try to get the attribute from the processing.multimodal module
+    if hasattr(processing_multimodal, name):
+        return getattr(processing_multimodal, name)
+    
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
