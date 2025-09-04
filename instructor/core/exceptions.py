@@ -26,6 +26,10 @@ class InstructorError(Exception):
         super().__init__(*args, **kwargs)
 
     def __str__(self) -> str:
+        # If no failed attempts, use the standard exception string representation
+        if not self.failed_attempts:
+            return super().__str__()
+
         template = Template(
             dedent(
                 """
@@ -43,13 +47,13 @@ class InstructorError(Exception):
         </failed_attempts>
 
         <last_exception>
-            {{ exception }}
+            {{ last_exception }}
         </last_exception>
         """
             )
         )
         return template.render(
-            exception=self.exception, failed_attempts=self.failed_attempts
+            last_exception=super().__str__(), failed_attempts=self.failed_attempts
         )
 
 
