@@ -14,7 +14,7 @@ class InstructorError(Exception):
     def from_exception(
         cls, exception: Exception, failed_attempts: list[FailedAttempt] | None = None
     ):
-        return cls(exception, failed_attempts=failed_attempts)  # type: ignore
+        return cls(str(exception), failed_attempts=failed_attempts)
 
     def __init__(
         self,
@@ -33,24 +33,24 @@ class InstructorError(Exception):
         template = Template(
             dedent(
                 """
-        <failed_attempts>
-        {% for attempt in failed_attempts %}
-        <generation number="{{ attempt.attempt_number }}">
-        <exception>
-            {{ attempt.exception }}
-        </exception>
-        <completion>
-            {{ attempt.completion }}
-        </completion>
-        </generation>
-        {% endfor %}
-        </failed_attempts>
+                <failed_attempts>
+                {% for attempt in failed_attempts %}
+                <generation number="{{ attempt.attempt_number }}">
+                <exception>
+                    {{ attempt.exception }}
+                </exception>
+                <completion>
+                    {{ attempt.completion }}
+                </completion>
+                </generation>
+                {% endfor %}
+                </failed_attempts>
 
-        <last_exception>
-            {{ last_exception }}
-        </last_exception>
-        """
-            )
+                <last_exception>
+                    {{ last_exception }}
+                </last_exception>
+                """
+            ).strip()
         )
         return template.render(
             last_exception=super().__str__(), failed_attempts=self.failed_attempts
@@ -98,8 +98,7 @@ class InstructorRetryException(InstructorError):
         self.n_attempts = n_attempts
         self.total_usage = total_usage
         self.create_kwargs = create_kwargs
-        self.failed_attempts = failed_attempts or []
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, failed_attempts=failed_attempts, **kwargs)
 
 
 class ValidationError(InstructorError):
