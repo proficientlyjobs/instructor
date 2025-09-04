@@ -1,12 +1,56 @@
 from __future__ import annotations
 
+from textwrap import dedent
 from typing import Any, NamedTuple
+from jinja2 import Template
 
 
 class InstructorError(Exception):
     """Base exception for all Instructor-specific errors."""
 
-    pass
+    failed_attempts: list[FailedAttempt] | None = None
+
+    @classmethod
+    def from_exception(
+        cls, exception: Exception, failed_attempts: list[FailedAttempt] | None = None
+    ):
+        return cls(exception, failed_attempts=failed_attempts)  # type: ignore
+
+    def __init__(
+        self,
+        *args: list[Any],
+        failed_attempts: list[FailedAttempt] | None = None,
+        **kwargs: dict[str, Any],
+    ):
+        self.failed_attempts = failed_attempts
+        super().__init__(*args, **kwargs)
+
+    def __str__(self) -> str:
+        template = Template(
+            dedent(
+                """
+        <failed_attempts>
+        {% for attempt in failed_attempts %}
+        <generation number="{{ attempt.attempt_number }}">
+        <exception>
+            {{ attempt.exception }}
+        </exception>
+        <completion>
+            {{ attempt.completion }}
+        </completion>
+        </generation>
+        {% endfor %}
+        </failed_attempts>
+
+        <last_exception>
+            {{ exception }}
+        </last_exception>
+        """
+            )
+        )
+        return template.render(
+            exception=self.exception, failed_attempts=self.failed_attempts
+        )
 
 
 class FailedAttempt(NamedTuple):
