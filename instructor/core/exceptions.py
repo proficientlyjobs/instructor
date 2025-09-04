@@ -1,12 +1,20 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, NamedTuple
 
 
 class InstructorError(Exception):
     """Base exception for all Instructor-specific errors."""
 
     pass
+
+
+class FailedAttempt(NamedTuple):
+    """Represents a single failed retry attempt."""
+
+    attempt_number: int
+    exception: Exception
+    completion: Any | None = None
 
 
 class IncompleteOutputException(InstructorError):
@@ -34,6 +42,7 @@ class InstructorRetryException(InstructorError):
         n_attempts: int,
         total_usage: int,
         create_kwargs: dict[str, Any] | None = None,
+        failed_attempts: list[FailedAttempt] | None = None,
         **kwargs: dict[str, Any],
     ):
         self.last_completion = last_completion
@@ -41,6 +50,7 @@ class InstructorRetryException(InstructorError):
         self.n_attempts = n_attempts
         self.total_usage = total_usage
         self.create_kwargs = create_kwargs
+        self.failed_attempts = failed_attempts or []
         super().__init__(*args, **kwargs)
 
 
