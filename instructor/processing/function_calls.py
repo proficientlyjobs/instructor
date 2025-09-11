@@ -95,12 +95,7 @@ def _validate_model_from_json(
         raise ValueError(f"Failed to parse JSON: {e}") from e
     except Exception as e:
         logger.debug(f"Model validation error: {e}")
-        # Re-raise with more context
-        from ..core.exceptions import ValidationError as InstructorValidationError
-
-        raise InstructorValidationError(
-            f"Failed to validate model {cls.__name__}: {str(e)}"
-        ) from e
+        raise
 
 
 class OpenAISchema(BaseModel):
