@@ -158,7 +158,7 @@ def reask_anthropic_tools(
         assistant_content.append(content.model_dump())  # type: ignore
         if (
             content.type == "tool_use"
-            and isinstance(exception, ValidationError | InstructorValidationError)
+            and isinstance(exception, (ValidationError, InstructorValidationError))
             and content.name == exception.title
         ):
             tool_use_id = content.id
